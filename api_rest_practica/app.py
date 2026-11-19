@@ -1,5 +1,8 @@
 """API de laboratorio con vulnerabilidades intencionales. Solo para uso local."""
 import sys
+import os
+from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 if sys.version_info >= (3, 14):
     import pkgutil, importlib.util, ast
     if not hasattr(pkgutil, 'get_loader'):
@@ -31,7 +34,8 @@ from pathlib import Path
 
 app = Flask(__name__)
 DB_PATH = Path(__file__).with_name("practica.db")
-API_KEY = "API_KEY_DEMO_NO_USAR_EN_PRODUCCION"
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
 
 
 def init_db():
@@ -42,8 +46,12 @@ def init_db():
             "(id INTEGER PRIMARY KEY, username TEXT, password TEXT)"
         )
         conn.execute(
-            "INSERT OR IGNORE INTO users (id, username, password) VALUES "
-            "(1, 'admin', 'AdminDemo123!'), (2, 'estudiante', 'Practica123!')"
+            "INSERT OR IGNORE INTO users (id, username, password) VALUES (?, ?, ?)",
+            (1, "admin", generate_password_hash("AdminDemo123!")),
+        )
+        conn.execute(
+            "INSERT OR IGNORE INTO users (id, username, password) VALUES (?, ?, ?)",
+            (2, "estudiante", generate_password_hash("Practica123!")),
         )
 
 
@@ -54,8 +62,8 @@ def health():
 
 @app.get("/api/profile")
 def profile():
-    # Vulnerabilidad intencional: secreto fijo en el código.
-    if request.headers.get("X-API-Key") != API_KEY:
+    # La clave se lee de la variable de entorno API_KEY (US-SEC-02)
+    if not API_KEY or request.headers.get("X-API-Key") != API_KEY:
         return jsonify(error="No autorizado"), 401
     return jsonify(user="admin", message="Acceso de demostración")
 
@@ -66,18 +74,12 @@ def login():
     username = data.get("username", "")
     password = data.get("password", "")
 
-    # Vulnerabilidad intencional: SQL concatenado con datos del usuario.
-    query = (
-        "SELECT id, username FROM users WHERE username = '"
-        + username
-        + "' AND password = '"
-        + password
-        + "'"
-    )
+       # Consulta parametrizada y validación con hash (US-SEC-01 / US-SEC-04)
+    query = "SELECT id, username, password FROM users WHERE username = ?"
     with sqlite3.connect(DB_PATH) as conn:
-        row = conn.execute(query).fetchone()
+        row = conn.execute(query, (username,)).fetchone()
 
-    if row:
+    if row and check_password_hash(row[2], password):
         return jsonify(message="Login correcto", user={"id": row[0], "username": row[1]})
     return jsonify(error="Credenciales inválidas"), 401
 
