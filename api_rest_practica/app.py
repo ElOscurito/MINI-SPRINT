@@ -1,5 +1,7 @@
 """API de laboratorio con vulnerabilidades intencionales. Solo para uso local."""
 import sys
+import os
+from dotenv import load_dotenv
 if sys.version_info >= (3, 14):
     import pkgutil, importlib.util, ast
     if not hasattr(pkgutil, 'get_loader'):
@@ -31,7 +33,8 @@ from pathlib import Path
 
 app = Flask(__name__)
 DB_PATH = Path(__file__).with_name("practica.db")
-API_KEY = "API_KEY_DEMO_NO_USAR_EN_PRODUCCION"
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
 
 
 def init_db():
@@ -66,7 +69,7 @@ def login():
     username = data.get("username", "")
     password = data.get("password", "")
 
-        # Consulta parametrizada (US-SEC-01)
+    # Consulta parametrizada (US-SEC-01)
     query = "SELECT id, username FROM users WHERE username = ? AND password = ?"
     with sqlite3.connect(DB_PATH) as conn:
         row = conn.execute(query, (username, password)).fetchone()
