@@ -4,7 +4,7 @@ Repositorio del proyecto integrador **Mini-Sprint DevSecOps** (Universidad Laica
 
 El objetivo de este laboratorio es simular un entorno ágil real (sprint corto) donde se hereda una API REST con deuda técnica y vulnerabilidades de seguridad intencionales, aplicando prácticas DevSecOps para identificar, priorizar, bloquear y remediar los hallazgos sin detener el ciclo de entrega de valor.
 
-## 📁 Estructura del Repositorio
+##  Estructura del Repositorio
 
 ```text
 MINI-SPRINT/
@@ -37,7 +37,7 @@ MINI-SPRINT/
    python app.py
    ```
 
-## 🛡️ Herramientas de Seguridad
+##  Herramientas de Seguridad
 
 - **SAST (Bandit):**
   ```powershell
@@ -48,7 +48,7 @@ MINI-SPRINT/
   pip-audit -r requirements.txt
   ```
 
-## 📋 Metodología DevSecOps
+## Metodología DevSecOps
 
 - **Backlog de Seguridad:** Gestionado mediante GitHub Issues y GitHub Projects.
 - **Definition of Done (DoD):** Requiere revisión por pares mediante Pull Request y escaneo SAST en 0 alertas altas/medias antes de autorizar el merge a la rama principal.
