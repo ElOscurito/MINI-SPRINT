@@ -57,8 +57,8 @@ def health():
 
 @app.get("/api/profile")
 def profile():
-    # Vulnerabilidad intencional: secreto fijo en el código.
-    if request.headers.get("X-API-Key") != API_KEY:
+    # La clave se lee de la variable de entorno API_KEY (US-SEC-02)
+    if not API_KEY or request.headers.get("X-API-Key") != API_KEY:
         return jsonify(error="No autorizado"), 401
     return jsonify(user="admin", message="Acceso de demostración")
 
