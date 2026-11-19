@@ -1,0 +1,42 @@
+name: CI DevSecOps - Build Breaker
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  sast-bandit:
+    name: SAST - Bandit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api_rest_practica/requirements.txt
+          pip install bandit
+      - name: Ejecutar Bandit (falla con severidad Media o Alta)
+        run: bandit -r api_rest_practica/app.py -ll -f txt
+
+  sca-pip-audit:
+    name: SCA - pip-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api_rest_practica/requirements.txt
+          pip install pip-audit
+      - name: Ejecutar pip-audit (falla si hay vulnerabilidades)
+        run: pip-audit -r api_rest_practica/requirements.txt
