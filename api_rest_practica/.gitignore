@@ -1,0 +1,17 @@
+# Python Virtual Environments
+.venv/
+venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Local SQLite Database
+practica.db
+*.db
+*.sqlite3
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
