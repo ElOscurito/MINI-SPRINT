@@ -16,7 +16,7 @@ MINI-SPRINT/
 └── README.md                   # Documentación general del repositorio
 ```
 
-## 🚀 Requisitos e Inicio Rápido
+##  Requisitos e Inicio Rápido
 
 1. Dirígete a la carpeta del proyecto:
    ```powershell
